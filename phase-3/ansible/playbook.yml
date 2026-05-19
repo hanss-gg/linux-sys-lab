@@ -1,0 +1,50 @@
+---
+- name: server-setup
+  hosts: webservers
+  become: yes
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install Nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: latest
+
+    - name: Nginx Running
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Buat user
+      ansible.builtin.user:
+        name: webadmin
+
+    - name: Install UFW
+      ansible.builtin.apt:
+        name: ufw
+        state: present
+
+    - name: UFW allow 22
+      ansible.builtin.ufw:
+        rule: allow
+        port: '22'
+        proto: tcp
+
+    - name: UFW allow 80
+      ansible.builtin.ufw:
+        rule: allow
+        port: '80'
+        proto: tcp
+
+    - name: UFW allow 443
+      ansible.builtin.ufw:
+        rule: allow
+        port: '443'
+        proto: tcp
+
+    - name: Enable UFW
+      ansible.builtin.ufw:
+        state: enabled
