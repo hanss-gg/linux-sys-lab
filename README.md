@@ -1,9 +1,13 @@
 # Cloud Engineering Portfolio Lab
 
+![CI](https://github.com/hanss-gg/linux-sys-lab/actions/workflows/ci.yml/badge.svg)
+
 A hands-on cloud engineering learning lab built progressively from Linux fundamentals
-to containerization, infrastructure as code, and monitoring.
+to containerization, infrastructure as code, monitoring, and CI/CD pipelines.
 
 Built entirely on local environment (WSL2 + Docker) — no cloud costs required.
+
+---
 
 ## Phases
 
@@ -27,7 +31,7 @@ A multi-container web application simulating a production-grade deployment.
 Stack: Node.js + Nginx (reverse proxy) + PostgreSQL
 
 Topics covered:
-- Dockerfile — multi-stage builds, non-root user, layer caching
+- Dockerfile — non-root user, layer caching, multi-stage builds
 - Docker CLI — build, run, exec, logs, container lifecycle
 - Docker Compose — multi-container orchestration, depends_on, healthcheck
 - Security — non-root containers, internal-only database, no unnecessary port exposure
@@ -49,6 +53,19 @@ Topics covered:
 
 ---
 
+### Phase 4 — CI/CD Pipeline + AWS Simulation
+Automated testing and deployment pipeline with local AWS service simulation.
+
+Topics covered:
+- GitHub Actions — workflow, jobs, steps, triggers, fail fast principle
+- CI/CD — pipeline as code, automated testing on every push
+- LocalStack — local AWS emulation (S3, Lambda, SQS)
+- AWS CLI v2 — S3 operations against local endpoint
+
+📁 [phase-4/](./phase-4)
+
+---
+
 ## Architecture Overview
 Phase 1: Linux Server
 ├── Users & Permissions
@@ -60,10 +77,14 @@ Phase 2: Container Stack
 ├── Node.js App          → internal only
 └── PostgreSQL           → internal only
 Phase 3: IaC + Monitoring
-├── Ansible → target server provisioning
-├── Prometheus → metrics collection
-├── Node Exporter → system metrics
-└── Grafana → visualization dashboard
+├── Ansible        → server provisioning
+├── Prometheus     → metrics collection
+├── Node Exporter  → system metrics
+└── Grafana        → visualization dashboard
+Phase 4: CI/CD + Cloud Simulation
+├── GitHub Actions → automated test + build
+├── LocalStack     → AWS S3, Lambda, SQS emulation
+└── AWS CLI v2     → cloud operations
 
 ## Tech Stack
 
@@ -74,14 +95,18 @@ Phase 3: IaC + Monitoring
 | Nginx | Web server + reverse proxy |
 | PostgreSQL | Database |
 | Ansible | Configuration management |
-| Prometheus | Metrics collection |
-| Grafana | Metrics visualization |
+| Prometheus + Grafana | Monitoring & visualization |
+| GitHub Actions | CI/CD pipeline |
+| LocalStack | AWS services emulation |
+| AWS CLI v2 | Cloud operations |
 
 ## Environment
 
 - OS: Windows 11 + WSL2 (Ubuntu 22.04)
 - RAM: 8GB
 - All tools: free and open-source
+
+---
 
 ## Running Each Phase
 
@@ -102,7 +127,7 @@ curl http://localhost
 ```bash
 cd phase-3/monitoring
 docker compose up -d
-# Grafana: http://localhost:3000 (admin / admin123)
+# Grafana:    http://localhost:3000 (admin / admin123)
 # Prometheus: http://localhost:9090
 ```
 
@@ -112,6 +137,27 @@ cd phase-3/ansible
 ansible-playbook -i inventory.ini playbook.yml
 ```
 
+### Phase 4 — LocalStack
+```bash
+cd phase-4
+docker compose up -d
+# S3 endpoint: http://localhost:4566
+aws --endpoint-url=http://localhost:4566 s3 ls
+```
+
+---
+
+## CI/CD Status
+
+Every push to `main` triggers the pipeline automatically:
+1. Run unit tests
+2. Build Docker image
+3. Verify build artifact
+
+---
+
 ## What's Next
-- Phase 4: CI/CD Pipeline + LocalStack (AWS simulation)
-- Phase 5: Kubernetes (k3s)
+- Capstone: Full stack DevOps project combining all phases
+- Kubernetes (k3s) — container orchestration
+- Terraform — infrastructure provisioning as code
+- AWS — deploy real infrastructure on cloud
